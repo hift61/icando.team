@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#050914">
   <title>I CAN DO!</title>
   <link rel="icon" href="assets/team-emblem-transparent.png" type="image/png">
-  <link rel="stylesheet" href="styles.css?v=goheung-ground-11">
-  <script src="scene.js?v=goheung-ground-11" defer></script>
+  <link rel="stylesheet" href="styles.css?v=our-vision-12">
+  <script src="scene.js?v=our-vision-12" defer></script>
 </head>
 <body>
   <canvas id="universe" aria-hidden="true"></canvas>
@@ -91,7 +91,29 @@
         </ol>
       </div>
     </section>
-    <section id="clouds" class="journey-stage" aria-label="구름 아래로 하강"></section>
+    <section id="vision" class="journey-stage vision-section" aria-labelledby="vision-title">
+      <div class="vision-content">
+        <header class="vision-heading">
+          <p class="story-label">우리의 미래와 비전</p>
+          <h2 id="vision-title">우주를 향한 호기심을,<br><span>함께 도전하는 힘으로.</span></h2>
+          <p class="vision-intro">더 깊이 탐구하고, 함께 성장하며,<br>배운 것을 다시 나누는 동아리가 되고 싶습니다.</p>
+        </header>
+        <div class="vision-directions">
+          <article class="vision-direction">
+            <h3>더 깊이 탐구하기</h3>
+            <p>궁금증을 직접 설계하고 검증하는 임무로 발전시킵니다. 캔위성에서 얻은 경험을 바탕으로, 새로운 문제에 도전하며 탐구의 범위를 넓혀갑니다.</p>
+          </article>
+          <article class="vision-direction">
+            <h3>함께 성장하기</h3>
+            <p>세미나와 팀활동으로 각자의 지식과 경험을 나눕니다. 성공한 결과뿐 아니라 시행착오도 기록해, 다음 도전이 그 위에서 시작될 수 있도록 합니다.</p>
+          </article>
+          <article class="vision-direction">
+            <h3>배움을 나누기</h3>
+            <p>우리가 배운 과학과 공학을 교육기부로 나눕니다. 우주를 궁금해하는 사람들이 직접 탐구하는 첫걸음을 내디딜 수 있도록 함께합니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
     <section id="ground" class="journey-stage" aria-label="전라남도 고흥군 고흥읍 첨단미래로 291, 잔디와 포장 구역 너머 로켓 발사대가 보이는 지상"></section>
   </main>
   <nav class="journey-progress" aria-label="페이지 구간 이동">
@@ -127,6 +149,10 @@
       <a class="journey-stop" href="#activities" data-section="activities" aria-label="우리의 여정 타임라인으로 이동">
         <svg viewBox="0 0 32 32" aria-hidden="true"><g transform="rotate(-24 16 16)"><ellipse cx="16" cy="16" rx="12" ry="4" fill="none" stroke="#b4c7dd" stroke-width="1.4"/><circle cx="16" cy="16" r="7" fill="#9eafc8"/><path d="M18 9.3a7 7 0 0 1 0 13.4c2.5-3.8 2.5-9.6 0-13.4Z" fill="#607b9c"/><path d="M4 16a12 4 0 0 0 24 0" fill="none" stroke="#d0deec" stroke-width="1.4"/></g></svg>
         <span class="stop-label">우리의 여정</span>
+      </a>
+      <a class="journey-stop" href="#vision" data-section="vision" aria-label="우리의 미래와 비전으로 이동">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="15" cy="17" r="7.5" fill="#91b4c7"/><path d="M17 9.8a7.5 7.5 0 0 1 0 14.4c2.8-4.2 2.8-10.2 0-14.4Z" fill="#527890"/><path d="M25 5v6m-3-3h6" stroke="#c9deeb" stroke-width=".9" stroke-linecap="round"/></svg>
+        <span class="stop-label">우리의 미래와 비전</span>
       </a>
       <a class="journey-stop" href="#ground" data-section="ground" aria-label="지상 풍경으로 이동">
         <svg viewBox="0 0 32 32" aria-hidden="true"><defs><clipPath id="rail-earth-clip"><circle cx="16" cy="16" r="8"/></clipPath></defs><circle cx="16" cy="16" r="8" fill="#7cabc3"/><g clip-path="url(#rail-earth-clip)" fill="#b6c6a3"><path d="m9 10 5-2 3 3-2 4-4 1-3-3Zm9 6 5-2 3 5-5 5-3-3Z"/></g><circle cx="16" cy="16" r="8" fill="none" stroke="#c4dbe7" stroke-width=".7"/></svg>
