@@ -26,9 +26,8 @@
  const smooth=(a,b,v)=>{const t=clamp((v-a)/(b-a));return t*t*(3-2*t);};
  function random(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
  // Keep the same scene when browser chrome or the viewport changes size.
- const starRandom=random(112),terrainRandom=random(218);
+ const starRandom=random(112);
  const stars=Array.from({length:1000},()=>({x:starRandom(),y:starRandom(),r:.3+Math.pow(starRandom(),5)*1.5,alpha:.25+starRandom()*.6,blue:starRandom()>.5,depth:starRandom()}));
- const terrain=Array.from({length:5},(_,layer)=>Array.from({length:101},(_,i)=>.35*Math.sin(i*.19+layer)+.15*Math.sin(i*.73+layer*2)+.35+terrainRandom()*.1));
  function cacheStars(){
   starfield.width=buffer.width;starfield.height=buffer.height;
   sc.setTransform(dpr,0,0,dpr,0,0);
@@ -93,27 +92,84 @@
    ctx.save();ctx.translate(cx,cy);ctx.scale(1,.55);ctx.fillStyle=g;ctx.translate(-cx,-cy);ctx.fillRect(cx-r,cy-r,r*2,r*2);ctx.restore();
   }ctx.restore();
  }
- function drawGround(t){
-  const p=smooth(.67,1,t);if(p===0)return;
-  ctx.save();ctx.globalAlpha=p;
-  const horizon=lerp(h*1.02,h*.51,p);
-  radial(w*.68,horizon,w*.5,[[0,'#fff3d650'],[1,'#fff3d600']]);
-  for(let layer=0;layer<5;layer++){
-   const offset=layer*.066*h,amplitude=(.055+layer*.025)*h*p;
-   ctx.beginPath();ctx.moveTo(-20,h);
-   for(let i=0;i<=100;i++){
-    const x=i/100*w,noise=terrain[layer][i],y=horizon+offset-amplitude*(noise*.6+Math.sin(i*.085+layer)*.4);
-    ctx.lineTo(x,y);
-   }ctx.lineTo(w+20,h);ctx.closePath();
-   const colors=['#7b9f9e','#688e87','#557b6d','#3d6151','#294736'];ctx.fillStyle=colors[layer];ctx.fill();
+ // Ground study based on the club's Goheung launch-site reference photographs.
+ // Paint this detailed scenery once, rather than rebuilding it during scrolling.
+ const ground=document.createElement('canvas');ground.width=1600;ground.height=1000;
+ const gc=ground.getContext('2d');
+ function groundTexture(){
+  const g=gc,rnd=random(291);
+  function polygon(points,fill){g.beginPath();points.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.closePath();g.fillStyle=fill;g.fill();}
+  function line(points,color,width=1){g.beginPath();points.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.strokeStyle=color;g.lineWidth=width;g.stroke();}
+  // Broad, softly shaded clouds above a low, open horizon.
+  for(const [x,y,s]of [[80,220,1.25],[480,150,1.1],[1170,255,1.4]]){
+   g.save();g.translate(x,y);g.scale(s,s);
+   g.beginPath();g.moveTo(-180,60);g.bezierCurveTo(-155,20,-105,25,-80,35);g.bezierCurveTo(-95,-30,-20,-63,20,-20);g.bezierCurveTo(55,-70,150,-42,150,12);g.bezierCurveTo(230,-12,260,40,225,65);g.bezierCurveTo(100,88,-50,83,-180,60);
+   const shade=g.createLinearGradient(0,-50,0,85);shade.addColorStop(0,'#f7f9f4b3');shade.addColorStop(.65,'#e5eceba6');shade.addColorStop(1,'#839ca345');g.fillStyle=shade;g.fill();g.restore();
   }
-  const fog=ctx.createLinearGradient(0,horizon-h*.2,0,h);fog.addColorStop(0,'#d5e7db00');fog.addColorStop(.3,'#d5e7db4a');fog.addColorStop(.64,'#d5e7db00');fog.addColorStop(1,'#132b2420');ctx.fillStyle=fog;ctx.fillRect(0,horizon-h*.2,w,h);
-  // Near-surface tree silhouettes enter only at the end of the descent.
-  const near=smooth(.91,1,t);ctx.globalAlpha=near*.65;const rnd=random(43);
-  for(let i=0;i<Math.ceil(w/28);i++){
-   const x=rnd()*w,y=h*(.86+rnd()*.14),size=(10+rnd()*35)*near;
-   ctx.fillStyle='#15382b';ctx.beginPath();ctx.moveTo(x,y-size);ctx.lineTo(x-size*.24,y);ctx.lineTo(x+size*.24,y);ctx.closePath();ctx.fill();ctx.fillRect(x-1,y,2,size*.13);
-  }ctx.restore();
+  g.fillStyle='#809ba2';g.beginPath();g.moveTo(0,608);g.bezierCurveTo(110,589,140,606,210,593);g.bezierCurveTo(265,585,272,570,325,578);g.bezierCurveTo(385,582,397,598,456,592);g.bezierCurveTo(510,586,550,558,593,569);g.bezierCurveTo(660,594,714,575,768,593);g.bezierCurveTo(850,581,880,607,962,595);g.bezierCurveTo(1115,573,1160,605,1245,579);g.bezierCurveTo(1390,556,1440,591,1600,574);g.lineTo(1600,643);g.lineTo(0,643);g.closePath();g.fill();
+  g.fillStyle='#536f71';g.beginPath();g.moveTo(0,618);
+  for(let i=0;i<=100;i++){const x=i*16,y=612-Math.sin(i*.17)*7-Math.sin(i*.53)*4-rnd()*5;g.lineTo(x,y);}g.lineTo(1600,646);g.lineTo(0,646);g.closePath();g.fill();
+  const grass=g.createLinearGradient(0,616,0,700);grass.addColorStop(0,'#6b8551');grass.addColorStop(1,'#879259');g.fillStyle=grass;g.fillRect(0,619,1600,88);
+  // A distant tree belt stays low, unlike the former mountain-and-forest scene.
+  for(let i=0;i<190;i++){const x=i*9,height=4+rnd()*12;g.fillStyle=i%3?'#405b45':'#50694b';g.beginPath();g.ellipse(x,622-height*.35,7+rnd()*9,height,0,0,Math.PI*2);g.fill();}
+  polygon([[0,658],[1600,649],[1600,675],[0,687]],'#b4b6a8');
+  const concrete=g.createLinearGradient(0,660,0,1000);concrete.addColorStop(0,'#cccabd');concrete.addColorStop(1,'#aca99d');g.fillStyle=concrete;g.fillRect(0,676,1600,324);
+  polygon([[0,688],[178,684],[528,1000],[0,1000]],'#888b86');
+  // Expansion joints and a faded taxiway stripe give the apron its depth.
+  for(const x of [-2200,-1400,-600,200,1000,1800,2600])line([[800+(x-800)*.08,672],[x,1000]],'#726f6559',1.15);
+  for(const y of [688,717,764,834,935])line([[0,y+10],[1600,y-7]],'#76766b45',1.05);
+  g.strokeStyle='#c6a75f99';g.lineWidth=3;g.beginPath();g.moveTo(286,681);g.bezierCurveTo(240,720,435,735,644,744);g.bezierCurveTo(920,758,1320,807,1600,878);g.stroke();
+  line([[0,671],[545,668]],'#ecebe0b3',2);
+  for(let i=0;i<1100;i++){const x=rnd()*1600,y=682+rnd()*318;g.fillStyle=i%2?'#f2ede31c':'#4b514719';g.fillRect(x,y,.5+rnd()*2,.5+rnd()*1.2);}
+  for(let i=0;i<12;i++){const x=42+i*33,y=677-i*.2;g.fillStyle='#d2bd69';g.fillRect(x,y-12,3,12);g.fillStyle='#4c5146';g.fillRect(x,y-8,3,4);}
+  // White peaked tents, with open sides and equipment tables beneath.
+  function tent(x,y,size){
+   g.save();g.translate(x,y);g.scale(size,size);
+   polygon([[-63,8],[63,8],[70,64],[-61,64]],'#374b456b');
+   for(const px of [-63,0,63])line([[px,5],[px,64]],'#d4dddb',2);
+   g.fillStyle='#e9eeeb';g.beginPath();g.moveTo(-70,7);g.quadraticCurveTo(-17,-6,0,-64);g.quadraticCurveTo(20,-9,70,7);g.quadraticCurveTo(0,18,-70,7);g.fill();
+   g.fillStyle='#c4d0cf';g.beginPath();g.moveTo(0,-64);g.quadraticCurveTo(26,-13,70,7);g.lineTo(0,11);g.closePath();g.fill();
+   line([[-70,7],[0,11],[70,7]],'#eef3ef',2);
+   g.fillStyle='#455854';g.fillRect(-42,39,78,5);for(const px of [-35,28])line([[px,44],[px,63]],'#7c8b83',2);
+   g.fillStyle='#344847';g.fillRect(-26,23,17,16);g.fillRect(10,28,14,11);g.restore();
+  }
+  tent(1370,633,.72);tent(1291,639,.86);tent(1190,646,1);
+  // Foreground launch rig: silver lattice mast, small white rocket and wheeled base.
+  g.save();g.translate(1020,0);g.lineCap='round';g.lineJoin='round';
+  polygon([[-74,862],[29,872],[210,972],[121,992],[-76,893]],'#4653542e');
+  for(const x of [-61,-30]){line([[x,286],[x,798]],'#9baeb4',5);line([[x-1,286],[x-1,798]],'#e6edeb',2);}
+  for(let y=300;y<780;y+=35){line([[-61,y],[-30,y],[-61,y+35]],'#d4dfdf',2.5);line([[-61,y],[-30,y+35]],'#b3c3c7',1.5);}
+  line([[-61,286],[-30,286]],'#d4dfdf',3);
+  line([[-61,297],[-89,278],[-94,263]],'#596c74',3);polygon([[-100,258],[-85,255],[-84,267],[-98,270]],'#354750');
+  // All support tubes meet the control-box chassis, as in the photographs.
+  const feet=[[-192,906],[188,923],[90,975]];
+  for(const [x,y]of feet){line([[-13,821],[x,y-8]],'#91a5aa',7);line([[-14,820],[x,y-9]],'#e2e9e5',3.5);line([[-20,795],[x*.83,y-24],[x,y-8]],'#e1e8e6',2.5);line([[x,y-17],[x,y+2]],'#8e9e9d',3);g.fillStyle='#788d8c';g.beginPath();g.ellipse(x,y+3,9,3,0,0,Math.PI*2);g.fill();}
+  for(const [x,y]of [[-48,871],[29,883],[51,866]]){g.fillStyle='#334044';g.beginPath();g.ellipse(x,y,6,10,0,0,Math.PI*2);g.fill();g.strokeStyle='#a16c66';g.lineWidth=2;g.stroke();}
+  polygon([[-60,785],[-38,770],[58,782],[38,797]],'#edf0ea');
+  polygon([[38,797],[58,782],[58,863],[38,878]],'#adbcc0');
+  polygon([[-60,785],[38,797],[38,878],[-60,865]],'#d7dfe0');
+  line([[-60,785],[38,797],[38,878],[-60,865],[-60,785]],'#8e9fa5',1);
+  line([[-43,795],[-43,859]],'#9aabb0',.8);line([[22,804],[22,870]],'#a4b3b7',.8);
+  for(const x of [-52,30])for(const y of [806,830,855]){g.fillStyle='#778c94';g.beginPath();g.arc(x,y+(x>0?7:0),1.3,0,Math.PI*2);g.fill();}
+  polygon([[-26,779],[27,785],[44,797],[-41,789]],'#495f66');
+  // Ogive nose, cylindrical body and three stabilising fins.
+  const rocket=g.createLinearGradient(-9,0,15,0);rocket.addColorStop(0,'#b2c3c9');rocket.addColorStop(.45,'#f3f5ed');rocket.addColorStop(1,'#d0dcdf');
+  g.fillStyle=rocket;g.beginPath();g.moveTo(-7,651);g.quadraticCurveTo(-7,603,3,566);g.quadraticCurveTo(16,605,14,651);g.closePath();g.fill();g.fillRect(-7,650,21,126);
+  line([[-7,651],[14,651]],'#9aaeb7',1);line([[-7,661],[14,661]],'#c1cdd0',.8);
+  polygon([[-7,746],[-24,781],[-5,776]],'#d9e1e0');polygon([[13,746],[32,786],[12,777]],'#becdd1');polygon([[1,750],[1,788],[6,790],[6,752]],'#eef1eb');
+  g.fillStyle='#a76662';g.beginPath();g.arc(3,673,3.2,0,Math.PI*2);g.fill();g.fillStyle='#466e8e';g.beginPath();g.arc(4,675,2.2,0,Math.PI*2);g.fill();
+  g.save();g.translate(2,691);g.rotate(Math.PI/2);g.fillStyle='#445b6d';g.font='600 7px sans-serif';g.fillText('CANSAT',0,0);g.restore();
+  g.strokeStyle='#475755';g.lineWidth=1.8;g.beginPath();g.moveTo(47,831);g.bezierCurveTo(98,879,161,843,157,886);g.bezierCurveTo(150,907,77,896,118,875);g.stroke();
+  g.fillStyle='#bb925b';g.fillRect(132,879,17,7);g.restore();
+ }
+ groundTexture();
+ function drawGround(t){
+  const p=smooth(.7,1,t);if(p===0)return;
+  const scale=Math.max(w/ground.width,h/ground.height)*(1+p*.06);
+  const width=ground.width*scale,height=ground.height*scale;
+  const x=clamp(w*(w<h?.55:.64)-1020*scale,w-width,0);
+  const y=h-height+(1-p)*h*.55;
+  ctx.save();ctx.globalAlpha=p;ctx.drawImage(ground,x,y,width,height);ctx.restore();
  }
  function draw(){
   frame=0;
@@ -121,8 +177,8 @@
   if(layoutDirty){positionWaypoints();layoutDirty=false;}
   const scroll=clamp(scrollY,0,maxScroll),t=scroll/maxScroll;
   const air=smooth(.42,.83,t),low=smooth(.78,1,t);
-  const top=color(color([3,6,15],[27,92,142],air),[99,155,178],low);
-  const bottom=color(color([6,12,25],[135,194,213],air),[211,224,198],low);
+  const top=color(color([3,6,15],[27,92,142],air),[110,157,188],low);
+  const bottom=color(color([6,12,25],[135,194,213],air),[199,217,224],low);
   const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,rgb(top));sky.addColorStop(1,rgb(bottom));ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
   const space=1-smooth(.35,.68,t);
   if(space>0){
