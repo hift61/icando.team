@@ -2,10 +2,10 @@
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#050914;color:var(--foreground);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;overflow-x:hidden}
 #universe{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:-1;pointer-events:none}
 .site-header{position:fixed;z-index:5;inset:0 0 auto;min-height:108px;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px clamp(24px,4.2vw,68px);background:linear-gradient(180deg,rgba(3,8,18,.46),transparent)}
-.brand{display:inline-flex;align-items:center;gap:16px;border-radius:4px;text-decoration:none;color:#f5f4ee}.brand img{display:block;width:72px;height:72px;object-fit:contain;background:transparent}.brand-name{font-family:Arial,Helvetica,sans-serif;font-size:25px;font-weight:700;line-height:1.2;letter-spacing:.015em;white-space:nowrap}.brand:focus-visible,.scroll-cue:focus-visible{outline:2px solid #7aa2c6;outline-offset:8px}
+.brand{display:inline-flex;align-items:center;gap:12px;border-radius:4px;text-decoration:none;color:#f5f4ee}.brand img{display:block;width:52px;height:52px;object-fit:contain;background:transparent;filter:drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff)}.brand-name{font-family:Arial,Helvetica,sans-serif;font-size:25px;font-weight:700;line-height:1.2;letter-spacing:.015em;white-space:nowrap}.brand:focus-visible,.scroll-cue:focus-visible{outline:2px solid #7aa2c6;outline-offset:8px}
 .journey-stage{height:100svh;min-height:400px}.scroll-cue{display:inline-flex;align-items:center;gap:12px;margin-top:26px;padding:10px 2px;color:#abb7c7;text-decoration:none;font:9px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1.6px}.scroll-cue>span:last-child{font-size:15px;line-height:1}.scroll-cue:hover{color:#f5f4ee}.journey-progress{position:fixed;right:clamp(24px,4.2vw,68px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:12px;color:#d9e2ec;font:7px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1.5px;z-index:3}.progress-track{height:110px;width:1px;background:#ffffff30;position:relative}.progress-track i{position:absolute;width:5px;height:5px;left:-2px;top:0;border-radius:50%;background:#edaa76;box-shadow:0 0 7px #eda96b70}
 .fallback-note{position:fixed;left:24px;bottom:80px;font-size:12px}
-@media(max-width:600px){.site-header{min-height:88px;padding:16px 24px;gap:12px}.brand{gap:12px}.brand img{width:56px;height:56px}.brand-name{font-size:21px}.scroll-cue{font-size:8px;letter-spacing:1.4px;margin-top:24px}.journey-progress{right:22px}.journey-progress>span{font-size:6px;letter-spacing:1px}.progress-track{height:80px}}
+@media(max-width:600px){.site-header{min-height:88px;padding:16px 24px;gap:12px}.brand{gap:12px}.brand img{width:42px;height:42px}.brand-name{font-size:21px}.scroll-cue{font-size:8px;letter-spacing:1.4px;margin-top:24px}.journey-progress{right:22px}.journey-progress>span{font-size:6px;letter-spacing:1px}.progress-track{height:80px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
 /* A quiet opening question with its scroll link directly underneath. */
@@ -21,3 +21,12 @@
 
 @media(max-width:600px){.question-intro{font-size:17px;margin-bottom:15px}.question-universe{font-size:clamp(57px,15vw,76px);margin-bottom:16px}.question-ending{font-size:clamp(27px,7vw,35px)}}
 @media(max-height:600px) and (min-width:601px){.space-intro{padding-top:155px}.question-intro{font-size:16px;margin-bottom:8px}.question-universe{font-size:58px;margin-bottom:10px}.question-ending{font-size:28px}}
+
+/* The origin story follows the opening question in the next scene. */
+.journey-stage.story-section{height:auto;min-height:100svh;display:flex;align-items:center;justify-content:center;padding:150px 76px 120px;scroll-margin-top:0}
+.story-content{width:min(100%,620px)}
+.story-label{margin:0 0 22px;color:#9eafc2;font-size:12px;font-weight:400;letter-spacing:.08em}
+.story-content h2{margin:0 0 34px;color:#edf3fb;font-size:clamp(27px,3.1vw,40px);font-weight:500;line-height:1.55;letter-spacing:-.035em;word-break:keep-all}
+.story-body p{margin:0 0 21px;color:#c7d0dc;font-size:15px;font-weight:400;line-height:2;letter-spacing:-.015em;word-break:keep-all;overflow-wrap:break-word}
+.story-body p:last-child{margin-bottom:0}.story-project{color:#eef3fa;font-weight:500;white-space:nowrap}
+@media(max-width:600px){.journey-stage.story-section{padding:124px 48px 100px 30px}.story-label{font-size:11px;margin-bottom:20px}.story-content h2{font-size:clamp(24px,6.3vw,31px);margin-bottom:28px;line-height:1.6}.story-body p{font-size:14px;line-height:2;margin-bottom:20px}}
