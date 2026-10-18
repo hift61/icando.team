@@ -1,14 +1,44 @@
 'use strict';
 // An art-directed scroll scene, not a scale model of the solar system.
 (() => {
- const canvas=document.getElementById('universe'),ctx=canvas.getContext('2d');
- if(!ctx)return;
+ const canvas=document.getElementById('universe'),screen=canvas.getContext('2d',{alpha:false});
+ const buffer=document.createElement('canvas'),ctx=buffer.getContext('2d',{alpha:false});
+ const starfield=document.createElement('canvas'),sc=starfield.getContext('2d');
+ if(!screen||!ctx||!sc)return;
  const progressDot=document.getElementById('progress-dot');
- let w=0,h=0,frame=0,stars=[],terrain=[];
+ const parachute=document.getElementById('progress-parachute');
+ const progressTrack=progressDot.parentElement;
+ const waypoints=Array.from(document.querySelectorAll('.journey-stop')).map(link=>({link,section:document.getElementById(link.dataset.section),offset:0}));
+ let maxScroll=1,trackHeight=0,markerAnchor=36,layoutDirty=true,activeWaypoint=null,lastDeployment='';
+ function positionWaypoints(){
+  maxScroll=Math.max(1,document.documentElement.scrollHeight-h);
+  trackHeight=progressTrack.clientHeight;
+  markerAnchor=progressDot.offsetHeight*.75;
+  for(const waypoint of waypoints){
+   waypoint.offset=waypoint.section.getBoundingClientRect().top+scrollY;
+   const top=`${Math.min(1,waypoint.offset/maxScroll)*100}%`;
+   if(waypoint.link.style.top!==top)waypoint.link.style.top=top;
+  }
+ }
+ let w=0,h=0,dpr=0,frame=0,starCount=0;
  const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
  const lerp=(a,b,t)=>a+(b-a)*t;
  const smooth=(a,b,v)=>{const t=clamp((v-a)/(b-a));return t*t*(3-2*t);};
  function random(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+ // Keep the same scene when browser chrome or the viewport changes size.
+ const starRandom=random(112),terrainRandom=random(218);
+ const stars=Array.from({length:1000},()=>({x:starRandom(),y:starRandom(),r:.3+Math.pow(starRandom(),5)*1.5,alpha:.25+starRandom()*.6,blue:starRandom()>.5,depth:starRandom()}));
+ const terrain=Array.from({length:5},(_,layer)=>Array.from({length:101},(_,i)=>.35*Math.sin(i*.19+layer)+.15*Math.sin(i*.73+layer*2)+.35+terrainRandom()*.1));
+ function cacheStars(){
+  starfield.width=buffer.width;starfield.height=buffer.height;
+  sc.setTransform(dpr,0,0,dpr,0,0);
+  for(let i=0;i<starCount;i++){
+   const star=stars[i],x=star.x*w,y=star.y*h;
+   sc.fillStyle=`rgba(${star.blue?'173,198,234':'236,226,207'},${star.alpha})`;
+   sc.beginPath();sc.arc(x,y,star.r,0,Math.PI*2);sc.fill();
+   if(star.r>1.3){sc.strokeStyle='#e2e9f544';sc.lineWidth=.5;sc.beginPath();sc.moveTo(x-star.r*3,y);sc.lineTo(x+star.r*3,y);sc.moveTo(x,y-star.r*3);sc.lineTo(x,y+star.r*3);sc.stroke();}
+  }
+ }
  function color(a,b,t){return a.map((v,i)=>Math.round(lerp(v,b[i],t)));}
  const rgb=a=>`rgb(${a.join(',')})`;
  function radial(x,y,r,stops){const g=ctx.createRadialGradient(x,y,0,x,y,r);for(const [at,c]of stops)g.addColorStop(at,c);ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();}
@@ -44,6 +74,7 @@
  }
  earthTexture();
  function drawEarth(t){
+  if(t>=.79)return;
   const approach=smooth(.04,.7,t),radius=Math.max(w*.8,h*.78)*(1+approach*.7);
   const top=lerp(h*1.07,h*.05,approach),cx=w*.48,cy=top+radius;
   ctx.save();ctx.globalAlpha=1-smooth(.64,.79,t);
@@ -85,21 +116,21 @@
   }ctx.restore();
  }
  function draw(){
-  frame=0;const max=Math.max(1,document.documentElement.scrollHeight-innerHeight),t=clamp(scrollY/max);
+  frame=0;
+  resize();
+  if(layoutDirty){positionWaypoints();layoutDirty=false;}
+  const scroll=clamp(scrollY,0,maxScroll),t=scroll/maxScroll;
   const air=smooth(.42,.83,t),low=smooth(.78,1,t);
   const top=color(color([3,6,15],[27,92,142],air),[99,155,178],low);
   const bottom=color(color([6,12,25],[135,194,213],air),[211,224,198],low);
   const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,rgb(top));sky.addColorStop(1,rgb(bottom));ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
   const space=1-smooth(.35,.68,t);
+  if(space>0){
   ctx.save();ctx.globalAlpha=space;
   // A faint galactic haze leaves plenty of dark negative space.
   ctx.save();ctx.translate(w*.55,h*.43-t*h*.65);ctx.rotate(-.36);ctx.scale(1,.28);radial(0,0,w*.7,[[0,'#66799e18'],[.55,'#59688d0c'],[1,'#59688d00']]);ctx.restore();
-  for(const star of stars){
-   const x=star.x*w,y=star.y*h-t*h*(.45+star.depth*.7);
-   if(y<0||y>h)continue;
-   ctx.fillStyle=`rgba(${star.blue?'173,198,234':'236,226,207'},${star.alpha})`;ctx.beginPath();ctx.arc(x,y,star.r,0,Math.PI*2);ctx.fill();
-   if(star.r>1.3){ctx.strokeStyle='#e2e9f544';ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(x-star.r*3,y);ctx.lineTo(x+star.r*3,y);ctx.moveTo(x,y-star.r*3);ctx.lineTo(x,y+star.r*3);ctx.stroke();}
-  }
+  // Move a cached starfield on physical pixel boundaries to avoid scintillation.
+  ctx.drawImage(starfield,0,-Math.round(t*h*.8*dpr)/dpr,w,h);
   const sunX=w*.69,sunY=h*.29-t*h*.65,sunR=Math.max(10,Math.min(w,h)*.017);
   radial(sunX,sunY,sunR*10,[[0,'#fff1bc60'],[.12,'#ffc76c44'],[.35,'#e77a3220'],[1,'#e77a3200']]);
   // Fill an explicit circle, so the solid gradient edge cannot form a square.
@@ -112,7 +143,9 @@
   planet(w*.84,h*.56-t*h*.82,Math.max(13,Math.min(w,h)*.03),'saturn');
   planet(w*.27,h*.44-t*h*.73,Math.max(6,Math.min(w,h)*.013),'mars');
   planet(w*.5,h*.18-t*h*.62,Math.max(4,Math.min(w,h)*.009),'blue');
-  ctx.restore();drawEarth(t);
+  ctx.restore();
+  }
+  drawEarth(t);
   const clouds=smooth(.5,.83,t);
   if(clouds>0){
    const drift=(t-.55)*h*1.15;
@@ -124,14 +157,47 @@
   drawGround(t);
   // A light vignette keeps the header readable at every altitude.
   const vignette=ctx.createLinearGradient(0,0,0,h*.22);vignette.addColorStop(0,'#03091638');vignette.addColorStop(1,'#03091600');ctx.fillStyle=vignette;ctx.fillRect(0,0,w,h*.22);
-  progressDot.style.top=`${t*100}%`;
+  // Publish only the completed scene; keep the previous image while rendering.
+  if(canvas.width!==buffer.width)canvas.width=buffer.width;
+  if(canvas.height!==buffer.height)canvas.height=buffer.height;
+  screen.setTransform(1,0,0,1,0,0);
+  screen.drawImage(buffer,0,0);
+  progressDot.style.transform=`translateY(${t*trackHeight-markerAnchor}px)`;
+  // Scale canopy and suspension lines around their shared attachment above the can.
+  const deployment=smooth(.05,.9,t);
+  const canopyTransform=`translate(24 43) scale(${lerp(.1,1,deployment).toFixed(3)} ${lerp(.3,1,deployment).toFixed(3)}) translate(-24 -43)`;
+  if(parachute&&canopyTransform!==lastDeployment){
+   parachute.setAttribute('transform',canopyTransform);
+   lastDeployment=canopyTransform;
+  }
+  let active=waypoints[0];
+  for(const waypoint of waypoints)if(scroll+Math.min(h*.3,180)>=waypoint.offset)active=waypoint;
+  if(active!==activeWaypoint){
+   for(const waypoint of waypoints){
+    const current=waypoint===active;
+    waypoint.link.classList.toggle('is-active',current);
+    if(current)waypoint.link.setAttribute('aria-current','location');else waypoint.link.removeAttribute('aria-current');
+   }
+   activeWaypoint=active;
+  }
  }
  function schedule(){if(!frame)frame=requestAnimationFrame(draw);}
  function resize(){
-  w=innerWidth;h=innerHeight;const dpr=Math.min(devicePixelRatio||1,2);canvas.width=w*dpr;canvas.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
-  const rnd=random(112);stars=Array.from({length:Math.min(1000,Math.floor(w*h/1100))},()=>({x:rnd(),y:rnd(),r:.3+Math.pow(rnd(),5)*1.5,alpha:.25+rnd()*.6,blue:rnd()>.5,depth:rnd()}));
-  terrain=Array.from({length:5},(_,layer)=>Array.from({length:101},(_,i)=>.35*Math.sin(i*.19+layer)+.15*Math.sin(i*.73+layer*2)+.35+rnd()*.1));
-  schedule();
+  // Bound GPU memory on large/Retina displays; text and icons keep native resolution.
+  const nextDpr=Math.min(devicePixelRatio||1,2,Math.sqrt(4000000/(innerWidth*innerHeight)));
+  if(w===innerWidth&&h===innerHeight&&dpr===nextDpr)return;
+  w=innerWidth;h=innerHeight;dpr=nextDpr;
+  // Resize the back buffer first; the visible image stays intact until presentation.
+  const width=Math.round(w*dpr),height=Math.round(h*dpr);
+  if(buffer.width!==width)buffer.width=width;
+  if(buffer.height!==height)buffer.height=height;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  starCount=Math.min(stars.length,Math.floor(w*h/1100));
+  cacheStars();
+  layoutDirty=true;
  }
- addEventListener('scroll',schedule,{passive:true});addEventListener('resize',resize,{passive:true});resize();
+ const layout=()=>{layoutDirty=true;schedule();};
+ addEventListener('scroll',schedule,{passive:true});addEventListener('resize',layout,{passive:true});schedule();
+ if('ResizeObserver' in window)new ResizeObserver(layout).observe(document.getElementById('journey'));
+ addEventListener('load',layout,{once:true});
 })();

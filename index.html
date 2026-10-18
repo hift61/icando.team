@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#050914">
   <title>I CAN DO!</title>
   <link rel="icon" href="assets/team-emblem-transparent.png" type="image/png">
-  <link rel="stylesheet" href="styles.css?v=our-start-1">
-  <script src="scene.js?v=4" defer></script>
+  <link rel="stylesheet" href="styles.css?v=parachute-descent-7">
+  <script src="scene.js?v=parachute-descent-7" defer></script>
 </head>
 <body>
   <canvas id="universe" aria-hidden="true"></canvas>
@@ -43,7 +43,43 @@
     <section id="clouds" class="journey-stage" aria-label="구름 아래로 하강"></section>
     <section id="ground" class="journey-stage" aria-label="산과 땅이 가까워지는 지상"></section>
   </main>
-  <div class="journey-progress" aria-hidden="true"><span>SPACE</span><div class="progress-track"><i id="progress-dot"></i></div><span>EARTH</span></div>
+  <nav class="journey-progress" aria-label="페이지 구간 이동">
+    <a class="journey-endpoint" href="#space">SUN</a>
+    <div class="progress-track">
+      <span id="progress-dot" aria-hidden="true">
+        <svg viewBox="0 0 48 72" fill="none">
+          <g id="progress-parachute" transform="translate(24 43) scale(0.100 0.300) translate(-24 -43)">
+            <path d="M3 24 24 43M13 24 24 43M24 24V43M35 24 24 43M45 24 24 43" stroke="#c5d8e7" stroke-width=".9" stroke-linecap="round"/>
+            <path d="M3 24C3 12 12 5 24 5S45 12 45 24Q40 20 35 24Q29.5 20 24 24Q18.5 20 13 24Q8 20 3 24Z" fill="#326d9d"/>
+            <path d="M24 5C17 10 13 17 13 24Q18.5 20 24 24C21 17 21 10 24 5ZM24 5C35 10 39 17 35 24Q40 20 45 24C45 13 35 5 24 5Z" fill="#e5ebed"/>
+            <path d="M3 24C3 12 12 5 24 5S45 12 45 24Q40 20 35 24Q29.5 20 24 24Q18.5 20 13 24Q8 20 3 24Z" stroke="#adc6d8" stroke-width=".7"/>
+          </g>
+          <path d="M24 43v2" stroke="#c5d8e7" stroke-width="1.2"/>
+          <g transform="translate(12 36)">
+          <path d="M5 9v15c0 3.3 14 3.3 14 0V9" fill="#e1e8ed" stroke="#f5f8fa" stroke-width="1.2"/>
+          <path d="M14 11v14c3-.2 5-.7 5-1.5V9" fill="#9aaebb"/>
+          <ellipse cx="12" cy="9" rx="7" ry="2.5" fill="#273e52" stroke="#f5f8fa" stroke-width="1.2"/>
+          <ellipse cx="12" cy="9" rx="3" ry="1" stroke="#a6bccb" stroke-width=".8"/>
+          <path d="M8 14v7m9-7v6" stroke="#405f78" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M5.5 23c3.2 1.6 9.8 1.6 13 0" stroke="#607d91" stroke-width=".8"/>
+          </g>
+        </svg>
+      </span>
+      <a class="journey-stop" href="#space" data-section="space" aria-label="첫 질문으로 이동" aria-current="location">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><defs><radialGradient id="rail-sun"><stop stop-color="#fff4cf"/><stop offset="1" stop-color="#eeb16b"/></radialGradient></defs><circle cx="16" cy="16" r="11" fill="#eeb16b" opacity=".12"/><circle cx="16" cy="16" r="8" fill="url(#rail-sun)"/></svg>
+        <span class="stop-label">우리도 우주에 갈 수 있을까?</span>
+      </a>
+      <a class="journey-stop" href="#orbit" data-section="orbit" aria-label="우리가 시작한 이유로 이동">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="7" fill="#c9b89a"/><path d="M18 9.3a7 7 0 0 1 0 13.4c2.5-3.8 2.5-9.6 0-13.4Z" fill="#8e826f"/><path d="m11 14 7-2m-7 7 8-2" fill="none" stroke="#eadcc2" stroke-opacity=".45" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span class="stop-label">우리가 시작한 이유</span>
+      </a>
+      <a class="journey-stop" href="#ground" data-section="ground" aria-label="지상 풍경으로 이동">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><defs><clipPath id="rail-earth-clip"><circle cx="16" cy="16" r="8"/></clipPath></defs><circle cx="16" cy="16" r="8" fill="#7cabc3"/><g clip-path="url(#rail-earth-clip)" fill="#b6c6a3"><path d="m9 10 5-2 3 3-2 4-4 1-3-3Zm9 6 5-2 3 5-5 5-3-3Z"/></g><circle cx="16" cy="16" r="8" fill="none" stroke="#c4dbe7" stroke-width=".7"/></svg>
+        <span class="stop-label">지상 풍경</span>
+      </a>
+    </div>
+    <a class="journey-endpoint" href="#ground">EARTH</a>
+  </nav>
   <noscript><p class="fallback-note">스크롤 배경을 보려면 JavaScript를 켜주세요.</p></noscript>
 </body>
 </html>
