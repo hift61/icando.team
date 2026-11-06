@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050914">
   <title>I CAN DO!</title>
   <link rel="icon" href="assets/team-emblem-transparent.png" type="image/png">
-  <link rel="stylesheet" href="styles.css?v=our-vision-12">
+  <link rel="stylesheet" href="styles.css?v=club-video-13">
   <script src="scene.js?v=our-vision-12" defer></script>
 </head>
 <body>
@@ -114,7 +114,19 @@
         </div>
       </div>
     </section>
-    <section id="ground" class="journey-stage" aria-label="전라남도 고흥군 고흥읍 첨단미래로 291, 잔디와 포장 구역 너머 로켓 발사대가 보이는 지상"></section>
+    <section id="ground" class="journey-stage video-section" aria-labelledby="video-title">
+      <div class="video-content">
+        <header class="video-heading">
+          <p class="story-label">영상으로 만나는 I CAN DO!</p>
+          <h2 id="video-title">우리의 도전을 소개합니다.</h2>
+        </header>
+        <video class="club-video" controls playsinline preload="metadata" width="1280" height="720" poster="assets/club-introduction-poster.jpg" aria-labelledby="video-title">
+          <source src="assets/club-introduction.mp4" type="video/mp4">
+          이 브라우저는 영상 재생을 지원하지 않습니다. <a href="assets/club-introduction.mp4">소개 영상 다운로드</a>
+        </video>
+        <p class="video-download"><a href="assets/club-introduction.mp4" download>영상 다운로드</a></p>
+      </div>
+    </section>
   </main>
   <nav class="journey-progress" aria-label="페이지 구간 이동">
     <a class="journey-endpoint" href="#space">SUN</a>
@@ -154,9 +166,9 @@
         <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="15" cy="17" r="7.5" fill="#91b4c7"/><path d="M17 9.8a7.5 7.5 0 0 1 0 14.4c2.8-4.2 2.8-10.2 0-14.4Z" fill="#527890"/><path d="M25 5v6m-3-3h6" stroke="#c9deeb" stroke-width=".9" stroke-linecap="round"/></svg>
         <span class="stop-label">우리의 미래와 비전</span>
       </a>
-      <a class="journey-stop" href="#ground" data-section="ground" aria-label="지상 풍경으로 이동">
+      <a class="journey-stop" href="#ground" data-section="ground" aria-label="소개 영상으로 이동">
         <svg viewBox="0 0 32 32" aria-hidden="true"><defs><clipPath id="rail-earth-clip"><circle cx="16" cy="16" r="8"/></clipPath></defs><circle cx="16" cy="16" r="8" fill="#7cabc3"/><g clip-path="url(#rail-earth-clip)" fill="#b6c6a3"><path d="m9 10 5-2 3 3-2 4-4 1-3-3Zm9 6 5-2 3 5-5 5-3-3Z"/></g><circle cx="16" cy="16" r="8" fill="none" stroke="#c4dbe7" stroke-width=".7"/></svg>
-        <span class="stop-label">지상 풍경</span>
+        <span class="stop-label">소개 영상</span>
       </a>
     </div>
     <a class="journey-endpoint" href="#ground">EARTH</a>
