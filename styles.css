@@ -94,15 +94,15 @@ body{isolation:isolate}
 .resource-link:focus-visible{outline:2px solid #b5d0e5;outline-offset:4px}
 .resource-link>span:first-child{word-break:keep-all}
 .resource-link>span:last-child{color:#bad6e8}
-.opencansat-model{margin:0;padding:80px 100px 100px 64px;background:#07111a}
-.opencansat-model img{display:block;width:min(100%,760px);height:auto;margin-inline:auto;border-radius:12px}
+.opencansat-link{padding:40px 100px 64px 64px;background:#07111a}
+.opencansat-link .resource-link{width:min(100%,760px);margin-inline:auto}
 @media(max-width:600px){
  .journey-stage.video-section{padding:115px 64px 90px 30px}
  .video-heading h2{font-size:clamp(25px,6.4vw,32px);margin-bottom:24px}
  .club-video{border-radius:8px}
  .resource-links{gap:10px;margin-top:24px}
  .resource-link{min-height:56px;padding:14px 12px;gap:6px;font-size:12px}
- .opencansat-model{padding:40px 64px 60px 30px}
+ .opencansat-link{padding:24px 64px 40px 30px}
 }
 
 /* A shared direction for the club, following the record of its activities. */
