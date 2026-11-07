@@ -88,10 +88,18 @@ body{isolation:isolate}
 .video-download{margin:18px 0 0;font-size:12px;line-height:1.6}
 .video-download a{color:#c0d0dd;text-underline-offset:4px}
 .video-download a:hover{color:#fff}
+.resource-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:30px}
+.resource-link{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:18px 24px;border:1px solid #c1d6e352;border-radius:8px;background:#0c1b29dc;color:#e5edf5;font-size:15px;line-height:1.6;text-decoration:none}
+.resource-link:hover{border-color:#bad6e8;background:#173147}
+.resource-link:focus-visible{outline:2px solid #b5d0e5;outline-offset:4px}
+.resource-link>span:first-child{word-break:keep-all}
+.resource-link>span:last-child{color:#bad6e8}
 @media(max-width:600px){
  .journey-stage.video-section{padding:115px 64px 90px 30px}
  .video-heading h2{font-size:clamp(25px,6.4vw,32px);margin-bottom:24px}
  .club-video{border-radius:8px}
+ .resource-links{gap:10px;margin-top:24px}
+ .resource-link{min-height:56px;padding:14px 12px;gap:6px;font-size:12px}
 }
 
 /* A shared direction for the club, following the record of its activities. */
