@@ -12,6 +12,7 @@
 - `CNAME`: 기존 도메인 설정
 - `assets/club-introduction.mp4`: 페이지 맨 아래에서 재생할 수 있는 동아리 소개 영상 (H.264/AAC, 약 5분 52초)
 - `assets/club-introduction-poster.jpg`: 소개 영상의 재생 전 미리보기
+- `assets/opencansat-model.png`: 페이지 맨 아래 3D 모델링 이미지. 출처: [OpenCanSat](https://github.com/CWS-2026/OpenCanSat/blob/main/hardware/mechanical/OpenCanSat.png). FAQ와 독립적으로 표시합니다.
 
 로컬 미리보기: `python3 -m http.server 8765 --bind 127.0.0.1`
 
